@@ -1,0 +1,48 @@
+pipeline {
+  agent any
+
+  // tools {
+  //   nodejs 'Node 6.x'
+  // }
+
+  stages {
+    stage('Pre-build') {
+      steps {
+        step([
+          $class: 'GitHubSetCommitStatusBuilder',
+          contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
+        ])
+      }
+    }
+
+    // stage('Dependencies') {
+    //   failFast true
+    //   parallel {
+    //     stage('Install Node.js dependencies') {
+    //       steps {
+    //         sh 'npm install --no-progress'
+    //       }
+    //     }
+    //   }
+    // }
+  }
+
+  post {
+    success {
+      step([
+        $class: 'GitHubCommitStatusSetter',
+        contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
+        errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'FAILURE']],
+        statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build succeeded', state: 'SUCCESS']]],
+      ])
+    }
+    failure {
+      step([
+        $class: 'GitHubCommitStatusSetter',
+        contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
+        errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'FAILURE']],
+        statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build failed', state: 'FAILURE']]],
+      ])
+    }
+  }
+}
