@@ -1,8 +1,5 @@
 pipeline {
   agent any
-  tools {
-    nodejs '6.x'
-  }
   stages {
     stage('Pre-build') {
       steps {
@@ -23,11 +20,14 @@ pipeline {
       parallel {
         stage('Lint JavaScript') {
           steps {
-            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
+            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml || true'
             junit(testResults: 'tests/results/eslint.junit.xml', allowEmptyResults: true)
           }
         }
       }
     }
+  }
+  tools {
+    nodejs '6.x'
   }
 }
