@@ -20,8 +20,10 @@ pipeline {
       parallel {
         stage('Lint JavaScript') {
           steps {
-            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml || true'
+            sh '''./node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml || true
+./node_modules/.bin/eslint . --format=checkstyle --output-file tests/results/eslint.checkstyle.xml || true'''
             junit(testResults: 'tests/results/eslint.junit.xml', allowEmptyResults: true)
+            checkstyle(canRunOnFailed: true, pattern: 'tests/results/eslint.checkstyle.xml')
           }
         }
       }
