@@ -1,73 +1,68 @@
 pipeline {
   agent any
-
-  tools {
-    nodejs '6.x'
-  }
-
   stages {
     stage('Pre-build') {
+      agent any
       steps {
         step([
-          $class: 'GitHubSetCommitStatusBuilder',
-          contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
-        ])
-      }
-    }
-
-    stage('Dependencies') {
-      failFast true
-      parallel {
-        stage('Install Node.js dependencies') {
-          steps {
-            sh 'npm install --no-progress'
-          }
+                    $class: 'GitHubSetCommitStatusBuilder',
+                    contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
+                  ])
         }
       }
-    }
-
-    stage('Lint') {
-      parallel {
-        stage('Lint JavaScript w/ Checkstyle') {
-          steps {
-            sh './node_modules/.bin/eslint . --format=checkstyle --output-file tests/results/eslint.checkstyle.xml'
-          }
-          post {
-            always {
-              checkstyle pattern: 'tests/results/*.checkstyle.xml'
+      stage('Dependencies') {
+        failFast true
+        parallel {
+          stage('Install Node.js dependencies') {
+            agent any
+            steps {
+              sh 'npm install --no-progress'
             }
           }
         }
-        // stage('Lint JavaScript w/ jUnit') {
-        //   steps {
-        //     sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
-        //   }
-        //   post {
-        //     always {
-        //       junit 'tests/results/*.junit.xml'
-        //     }
-        //   }
-        // }
+      }
+      stage('Linting') {
+        parallel {
+          stage('Lint JavaScript') {
+            agent any
+            steps {
+              sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
+              junit(testResults: 'tests/results/eslint.junit.xml', allowEmptyResults: true)
+            }
+            post {
+              always {
+                checkstyle(pattern: 'tests/results/*.checkstyle.xml')
+                
+              }
+              
+            }
+          }
+        }
       }
     }
-  }
-
-  post {
-    success {
-      step([
-        $class: 'GitHubCommitStatusSetter',
-        contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
-        errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'FAILURE']],
-        statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build succeeded', state: 'SUCCESS']]],
-      ])
+    tools {
+      nodejs '6.x'
     }
-    failure {
-      step([
-        $class: 'GitHubCommitStatusSetter',
-        contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
-        errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'FAILURE']],
-        statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build failed', state: 'FAILURE']]],
-      ])
-    }
-  }
-}
+    post {
+      success {
+        step([
+                  $class: 'GitHubCommitStatusSetter',
+                  contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
+                  errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'FAILURE']],
+                  statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build succeeded', state: 'SUCCESS']]],
+                ])
+          
+        }
+        
+        failure {
+          step([
+                    $class: 'GitHubCommitStatusSetter',
+                    contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status'],
+                    errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'FAILURE']],
+                    statusResultSource: [$class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: 'Build failed', state: 'FAILURE']]],
+                  ])
+            
+          }
+          
+        }
+      }
