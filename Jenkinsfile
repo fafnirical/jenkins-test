@@ -30,13 +30,15 @@ pipeline {
       parallel {
         stage('Lint JavaScript') {
           steps {
-            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.xml'
+            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
+            sh './node_modules/.bin/eslint . --format=checkstyle --output-file tests/results/eslint.checkstyle.xml'
           }
-          post {
-            always {
-              junit testResults: 'tests/results/eslint.xml'
-            }
-          }
+        }
+      }
+      post {
+        always {
+          checkstyle pattern: 'tests/results/*.checkstyle.xml'
+          junit 'tests/results/*.junit.xml'
         }
       }
     }
