@@ -20,7 +20,7 @@ pipeline {
       parallel {
         stage('Lint JavaScript') {
           steps {
-            sh './node_modules/.bin/eslint . --format=checkstyle --output-file tests/results/eslint.checkstyle.xml || true'
+            sh './node_modules/.bin/eslint . --format=checkstyle --output-file tests/results/eslint.checkstyle.xml'
             checkstyle(canRunOnFailed: true, pattern: 'tests/results/eslint.checkstyle.xml')
           }
         }
