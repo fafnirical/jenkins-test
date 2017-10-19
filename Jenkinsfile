@@ -1,9 +1,9 @@
 pipeline {
   agent any
 
-  // tools {
-  //   nodejs 'Node 6.x'
-  // }
+  tools {
+    nodejs 'Node 6.x'
+  }
 
   stages {
     stage('Pre-build') {
@@ -15,16 +15,31 @@ pipeline {
       }
     }
 
-    // stage('Dependencies') {
-    //   failFast true
-    //   parallel {
-    //     stage('Install Node.js dependencies') {
-    //       steps {
-    //         sh 'npm install --no-progress'
-    //       }
-    //     }
-    //   }
-    // }
+    stage('Dependencies') {
+      failFast true
+      parallel {
+        stage('Install Node.js dependencies') {
+          steps {
+            sh 'npm install --no-progress'
+          }
+        }
+      }
+    }
+
+    stage('Lint') {
+      parallel {
+        stage('Lint JavaScript') {
+          steps {
+            sh './node_modules/.bin/eslint --format=junit --output-file tests/results/eslint.xml'
+          }
+          post {
+            always {
+              junit testResults: 'tests/results/eslint.xml'
+            }
+          }
+        }
+      }
+    }
   }
 
   post {
