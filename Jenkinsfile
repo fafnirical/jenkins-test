@@ -26,6 +26,11 @@ pipeline {
         }
       }
     }
+    stage('Build') {
+      steps {
+        echo 'This shouldn\'t display'
+      }
+    }
   }
   tools {
     nodejs '6.x'
