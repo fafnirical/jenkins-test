@@ -30,10 +30,10 @@ pipeline {
         echo 'This shouldn\'t display'
       }
     }
-    post {
-      always {
-        junit(testResults: 'tests/results/*.junit.xml', allowEmptyResults: true)
-      }
+  }
+  post {
+    always {
+      junit(testResults: 'tests/results/*.junit.xml', allowEmptyResults: true)
     }
   }
   tools {
