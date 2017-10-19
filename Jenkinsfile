@@ -30,7 +30,7 @@ pipeline {
       parallel {
         stage('Lint JavaScript') {
           steps {
-            sh './node_modules/.bin/eslint --format=junit --output-file tests/results/eslint.xml'
+            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.xml'
           }
           post {
             always {
