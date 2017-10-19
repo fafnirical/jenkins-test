@@ -21,7 +21,6 @@ pipeline {
         stage('Lint JavaScript') {
           steps {
             sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
-            junit(testResults: 'tests/results/*.junit.xml', allowEmptyResults: true)
           }
         }
       }
@@ -29,6 +28,11 @@ pipeline {
     stage('Build') {
       steps {
         echo 'This shouldn\'t display'
+      }
+    }
+    post {
+      always {
+        junit(testResults: 'tests/results/*.junit.xml', allowEmptyResults: true)
       }
     }
   }
