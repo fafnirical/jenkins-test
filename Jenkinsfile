@@ -28,17 +28,25 @@ pipeline {
 
     stage('Lint') {
       parallel {
-        stage('Lint JavaScript') {
+        stage('Lint JavaScript w/ Checkstyle') {
           steps {
-            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
             sh './node_modules/.bin/eslint . --format=checkstyle --output-file tests/results/eslint.checkstyle.xml'
           }
+          post {
+            always {
+              checkstyle pattern: 'tests/results/*.checkstyle.xml'
+            }
+          }
         }
-      }
-      post {
-        always {
-          checkstyle pattern: 'tests/results/*.checkstyle.xml'
-          junit 'tests/results/*.junit.xml'
+        stage('Lint JavaScript w/ jUnit') {
+          steps {
+            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
+          }
+          post {
+            always {
+              junit 'tests/results/*.junit.xml'
+            }
+          }
         }
       }
     }
