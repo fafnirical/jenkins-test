@@ -39,14 +39,14 @@ pipeline {
           }
         }
         stage('Lint JavaScript w/ jUnit') {
-          steps {
-            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
-          }
-          post {
-            always {
-              junit 'tests/results/*.junit.xml'
-            }
-          }
+        //   steps {
+        //     sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
+        //   }
+        //   post {
+        //     always {
+        //       junit 'tests/results/*.junit.xml'
+        //     }
+        //   }
         }
       }
     }
