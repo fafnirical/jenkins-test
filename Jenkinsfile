@@ -15,7 +15,7 @@ pipeline {
       parallel {
         stage('Lint JavaScript') {
           steps {
-            sh './node_modules/.bin/eslint . --format=junit --output-file tests/results/eslint.junit.xml'
+            sh './node_modules/.bin/eslint . --format="./node_modules/eslint-formatter-relative-junit" --output-file tests/results/eslint.junit.xml'
           }
         }
       }
