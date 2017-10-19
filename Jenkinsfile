@@ -1,11 +1,6 @@
 pipeline {
   agent any
   stages {
-    stage('Pre-build') {
-      steps {
-        step([$class: 'GitHubSetCommitStatusBuilder', contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: 'ci/jenkins/build-status']])
-      }
-    }
     stage('Dependencies') {
       failFast true
       parallel {
