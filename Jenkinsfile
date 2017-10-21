@@ -13,14 +13,14 @@ pipeline {
     }
     stage('Linting') {
       parallel {
-        stage('Lint JavaScript') {
-          steps {
-            sh './node_modules/.bin/eslint **/*.{js,jsx} --format node_modules/eslint-formatter-relative-junit --output-file tests/results/eslint.junit.xml'
-          }
-        }
         stage('Lint CSS/SCSS') {
           steps {
             sh './node_modules/.bin/stylelint **/*.{css,scss} --custom-formatter node_modules/stylelint-formatter-relative-junit > tests/results/stylelint.junit.xml'
+          }
+        }
+        stage('Lint JavaScript') {
+          steps {
+            sh './node_modules/.bin/eslint **/*.{js,jsx} --format node_modules/eslint-formatter-relative-junit --output-file tests/results/eslint.junit.xml'
           }
         }
       }
