@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Lint TypeScript') {
           steps {
-            sh './node_modules/.bin/tslint **/*.{ts,tsx} --format junit --formatters-dir node_modules/tslint-junit-formatter/formatters --out tests/results/tslint.junit.xml'
+            sh './node_modules/.bin/tslint **/*.{ts,tsx} --exclude "node_modules/**" --format junit --formatters-dir node_modules/tslint-junit-formatter/formatters --out tests/results/tslint.junit.xml'
           }
         }
       }
