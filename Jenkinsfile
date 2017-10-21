@@ -23,6 +23,11 @@ pipeline {
             sh './node_modules/.bin/eslint **/*.{js,jsx} --format node_modules/eslint-formatter-relative-junit --output-file tests/results/eslint.junit.xml'
           }
         }
+        stage('Lint TypeScript') {
+          steps {
+            sh './node_modules/.bin/tslint **/*.{ts,tsx} --format junit --formatters-dir node_modules/tslint-junit-formatter/formatters --out tests/results/tslint.junit.xml'
+          }
+        }
       }
     }
     stage('Build') {
