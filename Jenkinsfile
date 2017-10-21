@@ -18,6 +18,11 @@ pipeline {
             sh './node_modules/.bin/eslint . --format="./node_modules/eslint-formatter-relative-junit" --output-file tests/results/eslint.junit.xml'
           }
         }
+        stage('Lint CSS/SCSS') {
+          steps {
+            sh './node_modules/.bin/stylelint **/*.scss --custom-formatter="./node_modules/stylelint-formatter-relative-junit" > tests/results/stylelint.junit.xml'
+          }
+        }
       }
     }
     stage('Build') {
