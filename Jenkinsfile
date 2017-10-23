@@ -43,5 +43,6 @@ pipeline {
   }
   tools {
     nodejs '6.x'
+    php '7.1'
   }
 }
