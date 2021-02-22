@@ -1,0 +1,17 @@
+{
+  "name": "jenkins-test",
+  "devDependencies": {
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-formatter-relative-junit": "0.0.3",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
+    "stylelint": "^8.2.0",
+    "stylelint-config-standard": "^17.0.0",
+    "stylelint-formatter-relative-junit": "0.0.2",
+    "tslint": "^5.8.0",
+    "tslint-junit-formatter": "^5.1.0",
+    "typescript": "^2.5.3"
+  }
+}
